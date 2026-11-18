@@ -32,22 +32,22 @@ const PwaInstallBanner = () => {
   if (!showBanner) return null;
 
   return (
-    <div className="pwa-banner relative w-full flex items-center justify-between px-4 py-3 text-white">
-      <button
-        onClick={() => setShowBanner(false)}
-        className="text-gray-400 hover:text-white transition-colors text-xl ml-4"
-        aria-label="إغلاق"
-      >✕</button>
-      <div className="flex items-center gap-3 flex-1">
-        <span className="text-2xl">📲</span>
-        <div>
-          <div className="font-bold text-sm">ثبّت التطبيق</div>
-          <div className="text-xs text-gray-300">استخدم الموقع كتطبيق أصلي</div>
+    <div className="pwa-banner w-full flex items-center justify-between px-3 py-2 text-white">
+      <div className="flex items-center gap-2 min-w-0">
+        <button
+          onClick={() => setShowBanner(false)}
+          className="text-gray-400 hover:text-white transition-colors text-base p-1"
+          aria-label="إغلاق"
+        >✕</button>
+        <span className="text-xl flex-shrink-0">📲</span>
+        <div className="min-w-0">
+          <div className="font-bold text-xs sm:text-sm truncate">ثبّت التطبيق</div>
+          <div className="text-[11px] text-gray-300 truncate hidden xs:block">استخدم الموقع كتطبيق أصلي</div>
         </div>
       </div>
       <button
         onClick={handleInstall}
-        className="bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-bold px-4 py-2 rounded-lg text-sm transition-colors mr-3 whitespace-nowrap"
+        className="bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-bold px-3 py-1.5 rounded-lg text-xs sm:text-sm transition-colors whitespace-nowrap shadow-sm flex-shrink-0"
       >ثبّت الآن</button>
     </div>
   );

@@ -94,7 +94,7 @@ const DownloadToast = ({ toast, onClose }) => {
 };
 
 // ─── Custom Animated Download Button ──────────────────────────────────────────
-const BeautifulDownloadButton = ({ pdfUrl, surahName, onNotify, isCompact = false }) => {
+const BeautifulDownloadButton = ({ pdfUrl, surahName, onNotify, isCompact = false, className = '' }) => {
   const [status, setStatus] = useState('idle'); // 'idle' | 'downloading' | 'success'
 
   const handleDownload = (e) => {
@@ -142,14 +142,16 @@ const BeautifulDownloadButton = ({ pdfUrl, surahName, onNotify, isCompact = fals
     <button
       onClick={handleDownload}
       disabled={status === 'downloading'}
+      className={className}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: 8,
-        padding: isCompact ? '6px 14px' : '9px 20px',
-        borderRadius: 10,
+        justifyContent: 'center',
+        gap: 6,
+        padding: isCompact ? '6px 12px' : '8px 18px',
+        borderRadius: 8,
         fontWeight: 700,
-        fontSize: isCompact ? '0.85rem' : '0.92rem',
+        fontSize: isCompact ? '0.8rem' : '0.9rem',
         fontFamily: 'Cairo, sans-serif',
         cursor: status === 'downloading' ? 'wait' : 'pointer',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -185,18 +187,18 @@ const BeautifulDownloadButton = ({ pdfUrl, surahName, onNotify, isCompact = fals
     >
       {status === 'downloading' ? (
         <>
-          <Loader2 size={16} className="animate-spin" />
+          <Loader2 size={15} className="animate-spin" />
           <span>جارٍ التحميل…</span>
         </>
       ) : status === 'success' ? (
         <>
-          <Check size={16} />
+          <Check size={15} />
           <span>تم التحميل!</span>
         </>
       ) : (
         <>
-          <Download size={16} />
-          <span>تحميل السورة</span>
+          <Download size={15} />
+          <span>{isCompact ? 'تحميل' : 'تحميل السورة'}</span>
         </>
       )}
     </button>
@@ -292,106 +294,16 @@ const VirtualSurahGrid = ({ surahNames, showSurah }) => {
   );
 };
 
-// ─── PDF Card ─────────────────────────────────────────────────────────────────
-const PdfCard = ({ surahData, setShowPdfModal, onNotify }) => {
+// ─── PDF Card (Single Persistent Viewer with Instant Fullscreen) ─────────────
+const PdfCard = ({ surahData, showPdfModal, setShowPdfModal, onNotify }) => {
   const [iframeLoading, setIframeLoading] = useState(true);
 
-  if (!surahData.pdfs?.[0]) return null;
+  // إعادة تعيين مؤشر التحميل عند تغيير السورة
+  useEffect(() => {
+    setIframeLoading(true);
+  }, [surahData.pdfs?.[0]]);
 
-  return (
-    <div className="pdf-card mb-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
-        <h3 className="text-white font-bold text-xl flex items-center gap-2">
-          <span>📖 المصحف الشريف — سورة {surahData.name}</span>
-        </h3>
-        <div className="flex gap-2 flex-wrap items-center">
-          <button
-            onClick={() => setShowPdfModal(true)}
-            className="bg-white text-yellow-700 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors font-bold text-sm whitespace-nowrap flex items-center gap-2 shadow-sm cursor-pointer"
-            title="تكبير وملء الشاشة لقراءة أوضح"
-          >
-            <Maximize2 size={16} />
-            <span>عرض ملء الشاشة</span>
-          </button>
-
-          <BeautifulDownloadButton
-            pdfUrl={surahData.pdfs[0]}
-            surahName={surahData.name}
-            onNotify={onNotify}
-          />
-        </div>
-      </div>
-
-      <div
-        className="relative bg-gray-900 rounded-xl overflow-hidden shadow-2xl"
-        style={{
-          border: '1px solid rgba(245, 200, 66, 0.25)',
-          background: '#1a1f2c',
-        }}
-      >
-        {/* Loading Skeleton */}
-        {iframeLoading && (
-          <div
-            className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center"
-            style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)' }}
-          >
-            <div
-              className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
-              style={{
-                border: '2px dashed #f5c842',
-                animation: 'spin 8s linear infinite',
-              }}
-            >
-              <BookOpen size={28} className="text-yellow-400" />
-            </div>
-            <div className="text-yellow-400 font-bold text-lg mb-1">
-              جارٍ إعداد صفحات المصحف الشريف…
-            </div>
-            <div className="text-gray-400 text-sm">
-              سورة {surahData.name} • يمكنك التمرير لأسفل داخل المصحف لقراءة جميع الصفحات
-            </div>
-          </div>
-        )}
-
-        <iframe
-          src={getPdfEmbedUrl(surahData.pdfs[0])}
-          className="w-full"
-          title={`مصحف سورة ${surahData.name}`}
-          loading="lazy"
-          scrolling="yes"
-          onLoad={() => setIframeLoading(false)}
-          style={{
-            minHeight: '620px',
-            height: '75vh',
-            border: 'none',
-            display: 'block',
-            opacity: iframeLoading ? 0 : 1,
-            transition: 'opacity 0.4s ease',
-            pointerEvents: 'auto',
-          }}
-        />
-
-        {/* Floating Quick Fullscreen Button in corner */}
-        <button
-          onClick={() => setShowPdfModal(true)}
-          className="absolute bottom-4 left-4 z-20 bg-gray-900 bg-opacity-85 hover:bg-opacity-100 text-yellow-400 hover:text-yellow-300 px-3 py-2 rounded-lg border border-yellow-500 border-opacity-40 shadow-xl flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer hover:scale-105"
-          title="عرض ملء الشاشة"
-        >
-          <Maximize2 size={15} />
-          <span>ملء الشاشة</span>
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// ─── PDF Modal ────────────────────────────────────────────────────────────────
-const HEADER_H = 54;
-
-const PdfModal = ({ surahData, showPdfModal, setShowPdfModal, onNotify }) => {
-  const [iframeLoading, setIframeLoading] = useState(true);
-
-  // منع سكرول الصفحة الخلفية فقط على الشاشات الكبيرة (حتى لا يتجمد اللمس على هواتف iOS و Android)
+  // منع سكرول الصفحة الخلفية فقط على الشاشات الكبيرة في وضع ملء الشاشة
   useEffect(() => {
     if (showPdfModal && window.innerWidth > 768) {
       const prevOverflow = document.body.style.overflow;
@@ -402,196 +314,218 @@ const PdfModal = ({ surahData, showPdfModal, setShowPdfModal, onNotify }) => {
     }
   }, [showPdfModal]);
 
-  if (!showPdfModal || !surahData.pdfs?.[0]) return null;
-  const downloadUrl = getPdfDownloadUrl(surahData.pdfs[0]);
-  const embedUrl = getPdfEmbedUrl(surahData.pdfs[0]);
+  if (!surahData.pdfs?.[0]) return null;
+
+  const HEADER_H = 50;
+
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#000' }}>
-      {/* Header */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: HEADER_H,
-          zIndex: 10000,
-          background: '#0f172a',
-          borderBottom: '2px solid #f5c842',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 12px',
-          direction: 'rtl',
-        }}
-      >
-        <span style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', fontFamily: 'Cairo, sans-serif' }}>
-          📖 مصحف سورة {surahData.name}
-        </span>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <a
-            href={surahData.pdfs[0]}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              padding: '6px 12px',
-              borderRadius: 8,
-              background: 'rgba(245, 200, 66, 0.15)',
-              border: '1px solid rgba(245, 200, 66, 0.4)',
-              color: '#f5c842',
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 4,
-              fontSize: '0.82rem',
-              fontWeight: 700,
-              fontFamily: 'Cairo, sans-serif',
-            }}
-            title="فتح في عارض الهاتف المباشر"
-          >
-            <ExternalLink size={14} />
-            <span className="hidden sm:inline">عرض مباشر</span>
-          </a>
-
-          <BeautifulDownloadButton
-            pdfUrl={surahData.pdfs[0]}
-            surahName={surahData.name}
-            onNotify={onNotify}
-            isCompact={true}
-          />
-
-          <button
-            onClick={() => setShowPdfModal(false)}
-            style={{
-              padding: '6px 14px',
-              background: '#dc2626',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 8,
-              fontWeight: 700,
-              fontSize: '0.85rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-              fontFamily: 'Cairo, sans-serif',
-              boxShadow: '0 2px 10px rgba(220,38,38,0.5)',
-              transition: 'background 0.2s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = '#b91c1c')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = '#dc2626')}
-          >
-            <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>✕</span>
-            <span>إغلاق</span>
-            <span style={{ fontSize: '1.1rem' }}>✕</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Locked Container (Prevents outer page from slipping down) */}
-      <div
-        style={{
-          position: 'fixed',
-          top: HEADER_H,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          overflow: 'hidden',
-          background: '#0b1120',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {/* Mobile Info & Direct Viewer Bar */}
+    <div
+      className={showPdfModal ? "fixed inset-0 z-[99999] bg-black overflow-hidden flex flex-col" : "pdf-card mb-6"}
+      style={showPdfModal ? { position: 'fixed', inset: 0, zIndex: 99999, background: '#000', height: '100dvh', width: '100vw' } : {}}
+    >
+      {/* ── شريط الرأس في وضع ملء الشاشة ── */}
+      {showPdfModal ? (
         <div
           style={{
-            background: 'linear-gradient(135deg, rgba(245, 200, 66, 0.15), rgba(15, 23, 42, 0.98))',
-            borderBottom: '1px solid rgba(245, 200, 66, 0.25)',
-            padding: '8px 14px',
+            height: HEADER_H,
+            background: '#0f172a',
+            borderBottom: '2px solid #f5c842',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: 10,
+            padding: '0 10px',
             direction: 'rtl',
+            gap: 6,
             flexShrink: 0,
           }}
         >
-          <span style={{ color: '#cbd5e1', fontSize: '12px', fontFamily: 'Cairo, sans-serif' }}>
-            📱 <strong style={{ color: '#f5c842' }}>على الهاتف:</strong> مرّر بإصبعين للتنقل، أو افتح العارض المباشر لتصفح الـ 21 صفحة بسلاسة
-          </span>
-          <a
-            href={surahData.pdfs[0]}
-            target="_blank"
-            rel="noopener noreferrer"
+          <span
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              background: 'linear-gradient(135deg, #f5c842, #e0a800)',
-              color: '#1a1000',
-              padding: '6px 14px',
-              borderRadius: 8,
-              fontSize: '12px',
+              color: '#fff',
               fontWeight: 700,
+              fontSize: '0.95rem',
               fontFamily: 'Cairo, sans-serif',
-              textDecoration: 'none',
-              boxShadow: '0 2px 10px rgba(245,200,66,0.35)',
               whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              maxWidth: '38%',
             }}
+            title={`مصحف سورة ${surahData.name}`}
           >
-            <ExternalLink size={13} />
-            <span>تصفح كامل السورة ↗</span>
-          </a>
-        </div>
+            📖 سورة {surahData.name}
+          </span>
 
-        {/* Loading overlay in Modal */}
-        {iframeLoading && (
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
+            <a
+              href={surahData.pdfs[0]}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                padding: '6px 10px',
+                borderRadius: 8,
+                background: 'rgba(245, 200, 66, 0.15)',
+                border: '1px solid rgba(245, 200, 66, 0.4)',
+                color: '#f5c842',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                fontFamily: 'Cairo, sans-serif',
+              }}
+              title="فتح في عارض الهاتف المباشر"
+            >
+              <ExternalLink size={13} />
+              <span className="hidden sm:inline">تصفح مباشر</span>
+            </a>
+
+            <BeautifulDownloadButton
+              pdfUrl={surahData.pdfs[0]}
+              surahName={surahData.name}
+              onNotify={onNotify}
+              isCompact={true}
+            />
+
+            <button
+              onClick={() => setShowPdfModal(false)}
+              style={{
+                padding: '6px 12px',
+                background: '#dc2626',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                fontFamily: 'Cairo, sans-serif',
+                boxShadow: '0 2px 8px rgba(220,38,38,0.4)',
+                transition: 'background 0.2s',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = '#b91c1c')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = '#dc2626')}
+            >
+              <span style={{ fontSize: '1rem', lineHeight: 1 }}>✕</span>
+              <span className="hidden xs:inline">إغلاق</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* ── شريط الرأس في وضع البطاقة العادية ── */
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+          <h3 className="text-white font-bold text-base sm:text-xl flex items-center gap-2">
+            <span>📖 المصحف الشريف — سورة {surahData.name}</span>
+          </h3>
+          <div className="flex gap-2 items-center w-full sm:w-auto">
+            <button
+              onClick={() => setShowPdfModal(true)}
+              className="flex-1 sm:flex-initial bg-white text-yellow-700 px-3.5 py-2 rounded-lg hover:bg-gray-100 transition-colors font-bold text-xs sm:text-sm whitespace-nowrap flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+              title="تكبير وملء الشاشة لقراءة أوضح"
+            >
+              <Maximize2 size={15} />
+              <span>ملء الشاشة</span>
+            </button>
+
+            <BeautifulDownloadButton
+              pdfUrl={surahData.pdfs[0]}
+              surahName={surahData.name}
+              onNotify={onNotify}
+              isCompact={true}
+              className="flex-1 sm:flex-initial justify-center"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ── إطار العرض (مشترك بين الوضع العادي وملء الشاشة لمنع إعادة التحميل) ── */}
+      <div
+        className={showPdfModal ? "flex-1 w-full h-full relative overflow-hidden flex flex-col" : "relative bg-gray-900 rounded-xl overflow-hidden shadow-2xl"}
+        style={
+          showPdfModal
+            ? { flex: 1, width: '100%', height: `calc(100% - ${HEADER_H}px)`, position: 'relative', overflow: 'hidden', background: '#0b1120' }
+            : { border: '1px solid rgba(245, 200, 66, 0.25)', background: '#1a1f2c' }
+        }
+      >
+        {/* تنبيه خفيف على الهاتف في وضع ملء الشاشة */}
+        {showPdfModal && (
           <div
+            className="flex sm:hidden"
             style={{
-              position: 'absolute',
-              top: 48,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: '#0b1120',
-              display: 'flex',
-              flexDirection: 'column',
+              background: 'rgba(15, 23, 42, 0.95)',
+              borderBottom: '1px solid rgba(245, 200, 66, 0.2)',
+              padding: '4px 10px',
               alignItems: 'center',
               justifyContent: 'center',
-              zIndex: 10,
-              color: '#f5c842',
+              direction: 'rtl',
+              fontSize: '11px',
+              color: '#cbd5e1',
+              fontFamily: 'Cairo, sans-serif',
+              flexShrink: 0,
+              textAlign: 'center',
             }}
           >
+            <span>💡 <strong style={{ color: '#f5c842' }}>على الهاتف:</strong> مرّر بإصبعين للتنقل، أو اضغط زر ↗ بأعلى الشاشة</span>
+          </div>
+        )}
+
+        {/* Loading Skeleton */}
+        {iframeLoading && (
+          <div
+            className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center"
+            style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)' }}
+          >
             <div
+              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mb-3"
               style={{
-                width: 56,
-                height: 56,
-                borderRadius: '50%',
-                border: '3px solid rgba(245, 200, 66, 0.2)',
-                borderTopColor: '#f5c842',
-                animation: 'spin 1s linear infinite',
-                marginBottom: 16,
+                border: '2px dashed #f5c842',
+                animation: 'spin 8s linear infinite',
               }}
-            />
-            <div style={{ fontFamily: 'Cairo, sans-serif', fontSize: '1.1rem', fontWeight: 700 }}>
-              جارٍ فتح المصحف الشريف…
+            >
+              <BookOpen size={24} className="text-yellow-400" />
+            </div>
+            <div className="text-yellow-400 font-bold text-base sm:text-lg mb-1">
+              جارٍ إعداد صفحات المصحف الشريف…
+            </div>
+            <div className="text-gray-400 text-xs sm:text-sm">
+              سورة {surahData.name} • يتم التحميل بأعلى أولوية
             </div>
           </div>
         )}
 
+        {/* ── IFRAME واحد فقط يعمل بأولوية قصوى ولا يُعاد تحميله ── */}
         <iframe
           src={getPdfEmbedUrl(surahData.pdfs[0])}
-          title="عارض المصحف"
+          className={showPdfModal ? "w-full h-full" : "pdf-preview-frame w-full"}
+          title={`مصحف سورة ${surahData.name}`}
+          loading="eager"
           scrolling="yes"
           onLoad={() => setIframeLoading(false)}
           style={{
-            flex: 1,
-            width: '100%',
-            height: '100%',
             border: 'none',
             display: 'block',
+            width: '100%',
+            height: showPdfModal ? '100%' : undefined,
+            flex: showPdfModal ? 1 : undefined,
+            opacity: iframeLoading ? 0 : 1,
+            transition: 'opacity 0.3s ease',
+            pointerEvents: 'auto',
           }}
         />
+
+        {/* زر التكبير في الزاوية في وضع البطاقة العادية */}
+        {!showPdfModal && (
+          <button
+            onClick={() => setShowPdfModal(true)}
+            className="absolute bottom-3 left-3 z-20 bg-gray-900 bg-opacity-85 hover:bg-opacity-100 text-yellow-400 hover:text-yellow-300 px-2.5 py-1.5 rounded-lg border border-yellow-500 border-opacity-40 shadow-xl flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer hover:scale-105"
+            title="عرض ملء الشاشة"
+          >
+            <Maximize2 size={13} />
+            <span>ملء الشاشة</span>
+          </button>
+        )}
       </div>
     </div>
   );
@@ -689,25 +623,32 @@ const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
 
       {/* ── صفحة السورة ── */}
       {activeSurahIndex !== null && !isLoadingSurahData && (
-        <div className="mt-4 p-4 rounded-xl shadow-lg relative" style={{ background: 'rgba(255,255,255,0.05)' }}>
-          <button
-            className="absolute top-4 left-4 text-white bg-red-500 hover:bg-red-600 w-9 h-9 rounded-full text-xl z-10 transition-colors flex items-center justify-center"
-            onClick={closeSurah}
-          >
-            ✕
-          </button>
+        <div className="mt-2 sm:mt-4 p-3 sm:p-5 rounded-xl shadow-lg relative" style={{ background: 'rgba(255,255,255,0.05)' }}>
+          {/* Header Row */}
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <button
+              className="text-white bg-red-500 hover:bg-red-600 w-8 h-8 sm:w-9 sm:h-9 rounded-full text-base sm:text-lg transition-colors flex items-center justify-center shadow-md flex-shrink-0"
+              onClick={closeSurah}
+              title="رجوع لقائمة السور"
+            >
+              ✕
+            </button>
+            <h2 className="text-xl sm:text-3xl font-bold text-white text-center flex-1 mx-2">
+              سورة {surahData.name}
+            </h2>
+            <div className="w-8 sm:w-9 flex-shrink-0" />
+          </div>
 
-          <h2 className="text-3xl font-bold text-center text-white mb-6">{surahData.name}</h2>
-
-          {/* ── PDF Card with Enhanced Download Button ── */}
+          {/* ── PDF Card with Instant Fullscreen (Single Persistent Viewer) ── */}
           <PdfCard
             surahData={surahData}
+            showPdfModal={showPdfModal}
             setShowPdfModal={setShowPdfModal}
             onNotify={showNotification}
           />
 
           {/* ── قارئي التلاوات ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mb-6">
             {firstTenSectionImages.map((image, index) => (
               <div
                 key={index}
@@ -741,29 +682,8 @@ const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
               </div>
             ))}
           </div>
-
-          {/* ── زر فتح المصحف العائم ── */}
-          {surahData.pdfs?.[0] && (
-            <div className="fixed bottom-20 left-4 z-40">
-              <button
-                onClick={() => setShowPdfModal(true)}
-                className="bg-gradient-to-br from-yellow-500 to-yellow-600 text-gray-900 p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center"
-                title="فتح المصحف ملء الشاشة"
-              >
-                <BookOpen size={24} />
-              </button>
-            </div>
-          )}
         </div>
       )}
-
-      {/* ── Fullscreen PDF Modal ── */}
-      <PdfModal
-        surahData={surahData}
-        showPdfModal={showPdfModal}
-        setShowPdfModal={setShowPdfModal}
-        onNotify={showNotification}
-      />
     </div>
   );
 };

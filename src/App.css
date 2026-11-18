@@ -424,9 +424,15 @@ audio::-webkit-media-controls-mute-button {
 .pdf-card {
   background: linear-gradient(135deg, #7c5c10 0%, #a37a1a 50%, #7c5c10 100%);
   border-radius: 16px;
-  padding: 24px;
+  padding: 14px;
   box-shadow: 0 8px 32px rgba(163, 122, 26, 0.3);
   border: 1px solid rgba(245, 200, 66, 0.3);
+}
+
+@media (min-width: 640px) {
+  .pdf-card {
+    padding: 24px;
+  }
 }
 
 .pdf-preview-frame {
@@ -598,8 +604,8 @@ audio::-webkit-media-controls-mute-button {
   }
 
   .pdf-preview-frame {
-    min-height: 350px !important;
-    height: 45vh;
+    min-height: 480px !important;
+    height: 65vh;
   }
 }
 
