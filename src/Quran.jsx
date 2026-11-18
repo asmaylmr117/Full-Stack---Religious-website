@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Download, Maximize2, Check, Loader2, BookOpen, CheckCircle2, ExternalLink } from 'lucide-react';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 const getPdfEmbedUrl = (pdfUrl) => {
   if (!pdfUrl) return '';
   if (pdfUrl.includes('drive.google.com')) {
@@ -240,15 +239,12 @@ const VirtualSurahGrid = ({ surahNames, showSurah }) => {
 
   for (let row = firstRow; row <= lastRow; row++) {
     const cells = [];
-
     for (let col = 0; col < columnCount; col++) {
       const idx = row * columnCount + col;
-
       if (idx >= surahNames.length) {
         cells.push(<div key={col} style={{ width: colWidth, flexShrink: 0 }} />);
         continue;
       }
-
       cells.push(
         <div key={col} style={{ width: colWidth, flexShrink: 0, padding: '6px', boxSizing: 'border-box' }}>
           <div
@@ -266,7 +262,6 @@ const VirtualSurahGrid = ({ surahNames, showSurah }) => {
         </div>
       );
     }
-
     visibleRows.push(
       <div
         key={row}
@@ -408,7 +403,8 @@ const PdfModal = ({ surahData, showPdfModal, setShowPdfModal, onNotify }) => {
   }, [showPdfModal]);
 
   if (!showPdfModal || !surahData.pdfs?.[0]) return null;
-
+  const downloadUrl = getPdfDownloadUrl(surahData.pdfs[0]);
+  const embedUrl = getPdfEmbedUrl(surahData.pdfs[0]);
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#000' }}>
       {/* Header */}
@@ -432,7 +428,6 @@ const PdfModal = ({ surahData, showPdfModal, setShowPdfModal, onNotify }) => {
         <span style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', fontFamily: 'Cairo, sans-serif' }}>
           📖 مصحف سورة {surahData.name}
         </span>
-
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <a
             href={surahData.pdfs[0]}
@@ -486,6 +481,7 @@ const PdfModal = ({ surahData, showPdfModal, setShowPdfModal, onNotify }) => {
             onMouseEnter={(e) => (e.currentTarget.style.background = '#b91c1c')}
             onMouseLeave={(e) => (e.currentTarget.style.background = '#dc2626')}
           >
+            <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>✕</span>
             <span>إغلاق</span>
             <span style={{ fontSize: '1.1rem' }}>✕</span>
           </button>
@@ -601,13 +597,11 @@ const PdfModal = ({ surahData, showPdfModal, setShowPdfModal, onNotify }) => {
   );
 };
 
-// ─── Reader images ────────────────────────────────────────────────────────────
 const firstTenSectionImages = [
   'img/mostafa.jpg', 'img/abdoo.jpg', 'img/Sedeq.jpg', 'img/hosery.jpg', 'img/bana.jpg',
   'img/agmy1.jpg', 'img/sodes.jpg', 'img/moeqlyi.jpeg', 'img/unnamed.png', 'img/mshary.jpg',
 ];
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
   const [surahNames, setSurahNames] = useState([]);
   const [surahData, setSurahData] = useState({ name: '', pdfs: [], audio: [] });
