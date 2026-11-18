@@ -5,13 +5,13 @@ const Azkar = ({ activeAzkarContent, handleAzkarClick, handleBackToAzkar }) => {
   const [azkarSections, setAzkarSections] = useState([]);
   const [azkarData, setAzkarData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null);   
   const [currentSectionData, setCurrentSectionData] = useState(null);
 
   
   useEffect(() => {
     const fetchAzkarData = async () => {
-      try {
+      try { 
         setLoading(true);
         const data = await azkarApi.getAllAzkarData();
         setAzkarSections(data.sections);

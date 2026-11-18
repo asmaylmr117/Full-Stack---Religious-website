@@ -625,8 +625,9 @@ audio::-webkit-media-controls-mute-button {
   background: linear-gradient(135deg, #0f172a, #1e293b);
   border-bottom: 2px solid var(--color-gold);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  z-index: 9999;
-  position: fixed;
+  position: relative;
+  width: 100%;
+  z-index: 20;
 }
 
 
