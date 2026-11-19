@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Download, Maximize2, Check, Loader2, BookOpen, CheckCircle2, ExternalLink } from 'lucide-react';
+import { Download, Maximize2, Check, Loader2, BookOpen, CheckCircle2, ExternalLink, Search, X } from 'lucide-react';
 
 const getPdfEmbedUrl = (pdfUrl) => {
   if (!pdfUrl) return '';
@@ -206,7 +206,7 @@ const BeautifulDownloadButton = ({ pdfUrl, surahName, onNotify, isCompact = fals
 };
 
 // ─── Virtual Scroll Grid ──────────────────────────────────────────────────────
-const VirtualSurahGrid = ({ surahNames, showSurah }) => {
+const VirtualSurahGrid = ({ surahNames, surahIndexes, showSurah }) => {
   const ITEM_HEIGHT = 90;
   const MIN_COL_WIDTH = 160;
   const OVERSCAN = 3;
@@ -229,6 +229,11 @@ const VirtualSurahGrid = ({ surahNames, showSurah }) => {
     return () => ro.disconnect();
   }, []);
 
+  useEffect(() => {
+    setScrollTop(0);
+    if (containerRef.current) containerRef.current.scrollTop = 0;
+  }, [surahNames]);
+
   const columnCount = Math.max(2, Math.floor(containerWidth / MIN_COL_WIDTH));
   const colWidth = Math.floor(containerWidth / columnCount);
   const rowCount = Math.ceil(surahNames.length / columnCount);
@@ -247,15 +252,16 @@ const VirtualSurahGrid = ({ surahNames, showSurah }) => {
         cells.push(<div key={col} style={{ width: colWidth, flexShrink: 0 }} />);
         continue;
       }
+      const surahIndex = surahIndexes?.[idx] ?? idx;
       cells.push(
         <div key={col} style={{ width: colWidth, flexShrink: 0, padding: '6px', boxSizing: 'border-box' }}>
           <div
             className="section-card h-full flex flex-col items-center justify-center gap-1"
             style={{ minHeight: ITEM_HEIGHT - 12, cursor: 'pointer' }}
-            onClick={() => showSurah(idx)}
+            onClick={() => showSurah(surahIndex)}
           >
             <span style={{ color: '#f5c842', fontSize: '11px', fontWeight: 700, opacity: 0.7 }}>
-              {idx + 1}
+              {surahIndex + 1}
             </span>
             <span style={{ fontWeight: 700, fontSize: '14px', lineHeight: 1.4, textAlign: 'center' }}>
               {surahNames[idx]}
@@ -573,8 +579,17 @@ const normalizeSurahAudio = (records) => {
     .sort((a, b) => a.order - b.order || a.index - b.index);
 };
 
+const normalizeSurahName = (value) => String(value || '')
+  .normalize('NFD')
+  .replace(/[\u0640\u064B-\u065F\u0670\u06D6-\u06ED]/g, '')
+  .replace(/[أإآٱ]/g, 'ا')
+  .replace(/ى/g, 'ي')
+  .trim()
+  .toLocaleLowerCase('ar');
+
 const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
   const [surahNames, setSurahNames] = useState([]);
+  const [surahSearch, setSurahSearch] = useState('');
   const [surahData, setSurahData] = useState({ name: '', pdfs: [], audio: [] });
   const [isLoadingSurahNames, setIsLoadingSurahNames] = useState(true);
   const [isLoadingSurahData, setIsLoadingSurahData] = useState(false);
@@ -626,6 +641,13 @@ const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
     });
   }, []);
 
+  const normalizedSurahSearch = normalizeSurahName(surahSearch);
+  const matchingSurahIndexes = surahNames
+    .map((name, index) => ({ name, index }))
+    .filter(({ name }) => normalizeSurahName(name).includes(normalizedSurahSearch))
+    .map(({ index }) => index);
+  const matchingSurahNames = matchingSurahIndexes.map((index) => surahNames[index]);
+
   return (
     <div dir="rtl">
       {/* ── Keyframes for Toast & animations ── */}
@@ -658,7 +680,39 @@ const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
       {activeSurahIndex === null && !isLoadingSurahNames && (
         <div className="mt-4 p-4 rounded-xl shadow-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
           <h2 className="text-2xl font-bold text-center text-white mb-6">القرآن الكريم</h2>
-          <VirtualSurahGrid surahNames={surahNames} showSurah={showSurah} />
+          <div className="quran-surah-search">
+            <label htmlFor="quran-surah-search-input">ابحث باسم السورة</label>
+            <div className="quran-surah-search-control">
+              <Search size={19} aria-hidden="true" />
+              <input
+                id="quran-surah-search-input"
+                type="search"
+                value={surahSearch}
+                onChange={(event) => setSurahSearch(event.target.value)}
+                placeholder="مثال: البقرة أو الرحمن"
+                autoComplete="off"
+              />
+              {surahSearch && (
+                <button type="button" onClick={() => setSurahSearch('')} aria-label="مسح البحث">
+                  <X size={18} />
+                </button>
+              )}
+            </div>
+            {surahSearch.trim() && matchingSurahIndexes.length > 0 && (
+              <p className="quran-surah-search-count" role="status">
+                عدد السور المطابقة: {matchingSurahIndexes.length}
+              </p>
+            )}
+          </div>
+          {matchingSurahNames.length ? (
+            <VirtualSurahGrid
+              surahNames={matchingSurahNames}
+              surahIndexes={matchingSurahIndexes}
+              showSurah={showSurah}
+            />
+          ) : surahSearch.trim() ? (
+            <p className="quran-surah-no-results">لم نعثر على سورة بهذا الاسم. جرّب كتابة جزء من الاسم.</p>
+          ) : null}
         </div>
       )}
 

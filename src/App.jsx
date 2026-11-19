@@ -4,6 +4,8 @@ import Quran from './Quran';
 import Azkar from './Azkar';
 import Misbaha from './Misbaha';
 import Sidebar from './Sidebar';
+import SiteInfoPage from './SiteInfoPage';
+import KnowledgeLibrary from './KnowledgeLibrary';
 import backgroundImage from '/img/photo.jpg';
 
 // ─── PWA Install Banner ───────────────────────────────────────────────────────
@@ -58,7 +60,6 @@ const App = () => {
   const [activeSection, setActiveSection] = useState('quran');
   const [activeSurahIndex, setActiveSurahIndex] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeSidebarSection, setActiveSidebarSection] = useState(null);
   const [activeAzkarContent, setActiveAzkarContent] = useState(null);
 
   const [count, setCount] = useState(() => {
@@ -72,39 +73,32 @@ const App = () => {
     try { localStorage.setItem('misbaha_count', count); } catch { }
   }, [count]);
 
-  const toggleSection = (section) => {
-    setActiveSection(activeSection === section ? null : section);
+  const navigateToSection = (section) => {
+    setActiveSection(section);
     setActiveSurahIndex(null);
     setActiveAzkarContent(null);
+    setIsSidebarOpen(false);
   };
 
   const showSurah = (index) => setActiveSurahIndex(index);
   const closeSurah = () => setActiveSurahIndex(null);
-  const toggleSidebar = () => { setIsSidebarOpen(!isSidebarOpen); setActiveSidebarSection(null); };
+  const toggleSidebar = () => setIsSidebarOpen((isOpen) => !isOpen);
   const closeWindow = () => window.open('about:blank', '_self').close();
-
-  const handleSidebarSectionClick = (section) => {
-    if (section === 'logout') closeWindow();
-    else setActiveSidebarSection(activeSidebarSection === section ? null : section);
-  };
 
   const handleAzkarClick = (section) => setActiveAzkarContent(section);
   const handleBackToAzkar = () => setActiveAzkarContent(null);
   const handleClick = () => setCount((c) => c + 1);
   const handleReset = () => setCount(0);
 
-  // ── Mosque Icon ────────────────────────────────────────────────────────
-  const MosqueIcon = () => (
-    <img
-      className="w-10 h-10 sm:w-8 sm:h-8 md:w-12 md:h-12 lg:w-14 lg:h-12"
-      src="./mosque-svgrepo-com.svg"
-      alt="شعار الموقع"
-    />
-  );
-
   // ── Hamburger Button ──────────────────────────────────────────────────────
   const HamburgerIcon = () => (
-    <button className="hamburger-btn" onClick={toggleSidebar} aria-label="القائمة">
+    <button
+      className="hamburger-btn"
+      onClick={toggleSidebar}
+      aria-label="القائمة"
+      aria-expanded={isSidebarOpen}
+      aria-controls="site-sidebar"
+    >
       <span></span>
       <span></span>
       <span></span>
@@ -118,37 +112,42 @@ const App = () => {
           HEADER
       ══════════════════════════════════════ */}
       <header className="nav-header">
-        <div className="relative w-full h-full p-3 px-4">
+        <div className="nav-inner">
 
-          {/* Small screen */}
-          <div className="flex md:hidden items-center justify-between">
-            <div className="flex items-center gap-2">
+          <div className="nav-mobile">
+            <div className="nav-mobile-brand flex items-center gap-2">
               <HamburgerIcon />
               <a href="#" className="nav-brand">الطريق إلى الجنة</a>
             </div>
-            <nav className="flex items-center gap-1">
-              <button className="nav-btn text-xs" onClick={() => toggleSection('misbaha')}>المسبحة</button>
-              <button className="nav-btn text-xs" onClick={() => toggleSection('azkar')}>الأذكار</button>
-              <button className="nav-btn text-xs" onClick={() => toggleSection('quran')}>القرآن</button>
+            <nav className="nav-mobile-sections flex items-center gap-1" aria-label="التنقل الرئيسي">
+              <button className={`nav-btn text-xs ${activeSection === 'quran' ? 'nav-btn-active' : ''}`} onClick={() => navigateToSection('quran')} aria-pressed={activeSection === 'quran'}>القرآن</button>
+              <button className={`nav-btn text-xs ${activeSection === 'azkar' ? 'nav-btn-active' : ''}`} onClick={() => navigateToSection('azkar')} aria-pressed={activeSection === 'azkar'}>الأذكار</button>
+              <button className={`nav-btn text-xs ${activeSection === 'misbaha' ? 'nav-btn-active' : ''}`} onClick={() => navigateToSection('misbaha')} aria-label="المسبحة الإلكترونية" title="المسبحة الإلكترونية" aria-pressed={activeSection === 'misbaha'}>المسبحة</button>
             </nav>
           </div>
 
-          {/* Large screen */}
-          <div className="hidden md:flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <HamburgerIcon />
-              <a href="#" className="nav-brand">الطريق إلى الجنة</a>
+          <div className="nav-desktop">
+            <div className="nav-desktop-brand-group">
+              <img className="nav-mosque-icon" src="./mosque-svgrepo-com.svg" alt="شعار الموقع" />
+              <a href="#" className="nav-brand nav-desktop-brand">الطريق إلى الجنة</a>
             </div>
-            <nav className="flex items-center gap-1">
-              <button className="nav-btn" onClick={() => toggleSection('misbaha')}>المسبحة الإلكترونية</button>
-              <span className="text-yellow-800 text-lg select-none">|</span>
-              <button className="nav-btn" onClick={() => toggleSection('azkar')}>الأذكار</button>
-              <span className="text-yellow-800 text-lg select-none">|</span>
-              <button className="nav-btn" onClick={() => toggleSection('quran')}>القرآن الكريم</button>
+            <nav className="nav-desktop-links" aria-label="التنقل الرئيسي">
+              <button className={`nav-btn ${activeSection === 'quran' ? 'nav-btn-active' : ''}`} onClick={() => navigateToSection('quran')} aria-pressed={activeSection === 'quran'}>
+                <span className="hidden lg:inline">القرآن الكريم</span><span className="lg:hidden">القرآن</span>
+              </button>
+              <button className={`nav-btn ${activeSection === 'azkar' ? 'nav-btn-active' : ''}`} onClick={() => navigateToSection('azkar')} aria-pressed={activeSection === 'azkar'}>الأذكار</button>
+              <button className={`nav-btn ${activeSection === 'misbaha' ? 'nav-btn-active' : ''}`} onClick={() => navigateToSection('misbaha')} aria-pressed={activeSection === 'misbaha'}>
+                <span className="hidden lg:inline">المسبحة الإلكترونية</span><span className="lg:hidden">المسبحة</span>
+              </button>
+              <button className={`nav-btn ${activeSection === 'siteInfo' ? 'nav-btn-active' : ''}`} onClick={() => navigateToSection('siteInfo')} aria-pressed={activeSection === 'siteInfo'}>
+                <span className="hidden lg:inline">عن الموقع ومطوره</span><span className="lg:hidden">عن الموقع</span>
+              </button>
+              <button className={`nav-btn ${activeSection === 'hadiths' ? 'nav-btn-active' : ''}`} onClick={() => navigateToSection('hadiths')} aria-pressed={activeSection === 'hadiths'}>
+                <span className="hidden lg:inline">الأحاديث النبوية</span><span className="lg:hidden">الأحاديث</span>
+              </button>
             </nav>
-            <MosqueIcon />
+            <div className="nav-desktop-spacer" aria-hidden="true" />
           </div>
-
         </div>
       </header>
 
@@ -161,12 +160,13 @@ const App = () => {
           MAIN
       ══════════════════════════════════════ */}
       <main className="container mx-auto p-4 max-w-screen-2xl">
-     
         {isSidebarOpen && (
           <Sidebar
             isSidebarOpen={isSidebarOpen}
             toggleSidebar={toggleSidebar}
-            handleSidebarSectionClick={handleSidebarSectionClick}
+            activeSection={activeSection}
+            onNavigate={navigateToSection}
+            onOpenSiteInfo={() => navigateToSection('siteInfo')}
             closeWindow={closeWindow}
           />
         )}
@@ -179,6 +179,12 @@ const App = () => {
         )}
         {activeSection === 'misbaha' && (
           <Misbaha count={count} handleClick={handleClick} handleReset={handleReset} />
+        )}
+        {activeSection === 'siteInfo' && (
+          <SiteInfoPage onBack={() => navigateToSection('quran')} />
+        )}
+        {activeSection === 'hadiths' && (
+          <KnowledgeLibrary />
         )}
       </main>
     </div>

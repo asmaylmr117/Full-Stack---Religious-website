@@ -123,10 +123,132 @@ a {
    NAVIGATION / HEADER
    ========================================== */
 .nav-header {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-  border-bottom: 2px solid var(--color-gold);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(245, 200, 66, 0.2);
-  /* position/top/z-index محذوفة — الـ fixed wrapper في App.jsx يتحكم بالثبات */
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(12, 18, 31, 0.88);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(245, 200, 66, 0.32);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.nav-inner {
+  width: 100%;
+  max-width: 1600px;
+  min-height: 72px;
+  margin-inline: auto;
+  padding: 10px clamp(12px, 2.2vw, 32px);
+}
+
+.nav-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 52px;
+}
+
+.nav-mobile-brand {
+  min-height: 40px;
+  flex: 0 0 auto;
+  gap: 5px;
+}
+
+.nav-mobile-sections {
+  flex: 0 0 auto;
+  gap: 0;
+}
+
+.nav-mobile-sections .nav-btn {
+  padding-inline: 6px;
+  font-size: 0.72rem;
+}
+
+.nav-desktop {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  min-height: 52px;
+  gap: clamp(8px, 1.4vw, 22px);
+}
+
+.nav-desktop-brand-group {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.nav-mosque-icon {
+  display: block;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 0 10px rgba(245, 200, 66, 0.2));
+}
+
+.nav-desktop-brand {
+  flex: 0 0 auto;
+}
+
+.nav-desktop-links {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-self: center;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.nav-desktop-spacer {
+  grid-column: 3;
+}
+
+.nav-library-menu {
+  position: relative;
+}
+
+.nav-library-chevron {
+  margin-right: 3px;
+  font-size: 0.8em;
+}
+
+.nav-library-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 40;
+  display: grid;
+  gap: 4px;
+  width: max-content;
+  min-width: 190px;
+  padding: 8px;
+  border: 1px solid rgba(245, 200, 66, 0.28);
+  border-radius: 14px;
+  background: rgba(13, 17, 27, 0.98);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+}
+
+.nav-library-dropdown button {
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #f3f4f6;
+  font: 600 0.88rem var(--font-primary);
+  text-align: right;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.nav-library-dropdown button:hover,
+.nav-library-dropdown button:focus-visible {
+  color: var(--color-gold-light);
+  background: rgba(245, 200, 66, 0.1);
+  outline: none;
 }
 
 .nav-brand {
@@ -148,37 +270,601 @@ a {
 .nav-btn {
   font-family: var(--font-primary);
   font-weight: 600;
-  font-size: clamp(0.75rem, 1.5vw, 1rem);
-  color: var(--color-gold);
+  font-size: clamp(0.75rem, 1.1vw, 0.95rem);
+  color: rgba(255, 255, 255, 0.76);
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px 14px;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
   transition: var(--transition-smooth);
   position: relative;
   white-space: nowrap;
 }
 
 .nav-btn::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  right: 50%;
-  width: 0;
-  height: 2px;
-  background: var(--color-gold);
-  transition: var(--transition-smooth);
-  transform: translateX(50%);
+  display: none;
 }
 
 .nav-btn:hover {
-  color: var(--color-gold-light);
-  background: rgba(245, 200, 66, 0.1);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.09);
 }
 
-.nav-btn:hover::after {
-  width: 80%;
+.nav-btn-active,
+.nav-btn-active:hover {
+  color: #101827;
+  background: linear-gradient(135deg, #fddc73, #f5c842);
+  box-shadow: 0 4px 14px rgba(245, 200, 66, 0.2);
+}
+
+/* ==========================================
+   STORIES AND HADITH LIBRARY
+   ========================================== */
+.knowledge-page {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 14px 0 48px;
+  color: #f9fafb;
+}
+
+.knowledge-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(24px, 5vw, 48px) 20px 34px;
+  border: 1px solid rgba(245, 200, 66, 0.22);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 15% 5%, rgba(245, 200, 66, 0.14), transparent 34%),
+    linear-gradient(135deg, rgba(19, 29, 44, 0.96), rgba(14, 20, 32, 0.94));
+  text-align: center;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.3);
+}
+
+.knowledge-hero-icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 12px;
+  place-items: center;
+  border: 1px solid rgba(245, 200, 66, 0.34);
+  border-radius: 18px;
+  background: rgba(245, 200, 66, 0.1);
+  color: var(--color-gold-light);
+  font-size: 1.75rem;
+}
+
+.knowledge-eyebrow {
+  display: block;
+  color: var(--color-gold-light);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.knowledge-hero h1 {
+  margin-top: 5px;
+  color: #fff;
+}
+
+.knowledge-hero p {
+  margin-top: 5px;
+  color: #cbd5e1;
+}
+
+.knowledge-tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0;
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.82);
+}
+
+.knowledge-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: #d1d5db;
+  font: 700 0.9rem var(--font-primary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.knowledge-tab:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.knowledge-tab-active,
+.knowledge-tab-active:hover {
+  border-color: rgba(245, 200, 66, 0.28);
+  background: rgba(245, 200, 66, 0.12);
+  color: var(--color-gold-light);
+}
+
+.knowledge-content {
+  min-height: 300px;
+  padding: clamp(16px, 3vw, 30px);
+  border: 1px solid rgba(245, 200, 66, 0.16);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(17, 24, 39, 0.96), rgba(15, 23, 42, 0.92));
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+}
+
+.knowledge-list-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.knowledge-list-heading h2,
+.knowledge-detail-heading h2 {
+  margin-top: 4px;
+  color: #fff;
+  font-size: clamp(1.2rem, 2.4vw, 1.65rem);
+}
+
+.knowledge-count {
+  flex: 0 0 auto;
+  color: #cbd5e1;
+  font-size: 0.84rem;
+}
+
+.knowledge-search-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #cbd5e1;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.knowledge-search {
+  width: 100%;
+  min-height: 46px;
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  outline: none;
+  background: rgba(3, 7, 18, 0.5);
+  color: #f9fafb;
+  font: 500 0.95rem var(--font-primary);
+}
+
+.knowledge-search::placeholder {
+  color: #9ca3af;
+}
+
+.knowledge-search:focus {
+  border-color: rgba(245, 200, 66, 0.68);
+  box-shadow: 0 0 0 3px rgba(245, 200, 66, 0.12);
+}
+
+.knowledge-select {
+  cursor: pointer;
+}
+
+.knowledge-select option {
+  background: #111827;
+  color: #f9fafb;
+}
+
+.knowledge-people-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.knowledge-person-card,
+.knowledge-hadith-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #f9fafb;
+  text-align: right;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.knowledge-person-card:hover,
+.knowledge-hadith-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 200, 66, 0.38);
+  background: rgba(245, 200, 66, 0.065);
+}
+
+.knowledge-person-icon,
+.knowledge-hadith-card-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 13px;
+  background: rgba(245, 200, 66, 0.11);
+  color: var(--color-gold-light);
+  font-size: 1.15rem;
+}
+
+.knowledge-person-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.knowledge-person-copy strong {
+  color: #fff;
+  font-size: 0.96rem;
+}
+
+.knowledge-person-copy > span {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  line-height: 1.7;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.knowledge-open-icon {
+  margin-right: auto;
+  flex: 0 0 auto;
+  color: var(--color-gold-light);
+  font-size: 1.05rem;
+}
+
+.knowledge-hadith-list {
+  display: grid;
+  gap: 10px;
+}
+
+.knowledge-hadith-card {
+  width: 100%;
+  min-height: 64px;
+  line-height: 1.8;
+}
+
+.knowledge-hadith-card > span:nth-child(2) {
+  flex: 1;
+}
+
+.knowledge-hadith-card-icon {
+  font-weight: 800;
+}
+
+.knowledge-hadith-card-copy {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 4px;
+}
+
+.knowledge-hadith-card-copy strong {
+  color: #fff;
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.knowledge-hadith-card-copy > span {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.knowledge-results-count {
+  margin: -8px 0 12px;
+  color: #cbd5e1;
+  font-size: 0.84rem;
+}
+
+.knowledge-more,
+.knowledge-pagination button,
+.knowledge-retry {
+  padding: 9px 16px;
+  border: 1px solid rgba(245, 200, 66, 0.35);
+  border-radius: 10px;
+  background: rgba(245, 200, 66, 0.1);
+  color: var(--color-gold-light);
+  font: 700 0.88rem var(--font-primary);
+  cursor: pointer;
+}
+
+.knowledge-more {
+  display: block;
+  margin: 18px auto 0;
+}
+
+.knowledge-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 20px;
+  color: #cbd5e1;
+  font-size: 0.87rem;
+}
+
+.knowledge-pagination button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.knowledge-status {
+  margin: 14px 0;
+  color: #cbd5e1;
+  text-align: center;
+}
+
+.knowledge-error {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  border-radius: 14px;
+  background: rgba(127, 29, 29, 0.12);
+  color: #fecaca;
+  text-align: center;
+}
+
+.knowledge-detail {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.knowledge-back {
+  margin-bottom: 20px;
+  padding: 8px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #e5e7eb;
+  font: 600 0.85rem var(--font-primary);
+  cursor: pointer;
+}
+
+.knowledge-back:hover {
+  border-color: rgba(245, 200, 66, 0.4);
+  color: var(--color-gold-light);
+}
+
+.knowledge-detail-heading {
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.knowledge-detail-heading > p {
+  margin-top: 12px;
+  color: #cbd5e1;
+  line-height: 2;
+}
+
+.knowledge-story-section {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.knowledge-story-section h3 {
+  margin-bottom: 8px;
+  color: var(--color-gold-light);
+  font-size: 1.08rem;
+}
+
+.knowledge-story-text {
+  color: #e5e7eb;
+  line-height: 2.1;
+  white-space: pre-line;
+}
+
+.knowledge-inline-source {
+  margin-inline: 4px;
+  color: var(--color-gold-light);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.knowledge-hadith-text {
+  margin-top: 20px;
+  padding: clamp(18px, 4vw, 30px);
+  border-right: 4px solid var(--color-gold);
+  border-radius: 14px;
+  background: rgba(245, 200, 66, 0.065);
+  color: #fff7d6;
+  font-size: clamp(1.08rem, 2.5vw, 1.35rem);
+  line-height: 2.2;
+}
+
+.knowledge-hadith-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.knowledge-hadith-meta span {
+  padding: 6px 11px;
+  border: 1px solid rgba(245, 200, 66, 0.22);
+  border-radius: 999px;
+  background: rgba(245, 200, 66, 0.07);
+  color: #f3e5ad;
+  font-size: 0.8rem;
+}
+
+.knowledge-hints {
+  display: grid;
+  gap: 9px;
+  padding-right: 20px;
+  color: #e5e7eb;
+  line-height: 1.9;
+}
+
+.knowledge-words {
+  display: grid;
+  gap: 8px;
+}
+
+.knowledge-words > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+}
+
+.knowledge-words dt {
+  color: var(--color-gold-light);
+  font-weight: 700;
+}
+
+.knowledge-words dd {
+  color: #e5e7eb;
+}
+
+.knowledge-reference {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #d1d5db;
+}
+
+.knowledge-reference summary {
+  color: var(--color-gold-light);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.knowledge-reference p {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  line-height: 2;
+  white-space: pre-line;
+}
+
+.knowledge-source-link {
+  display: inline-flex;
+  margin-top: 20px;
+  color: var(--color-gold-light);
+  font-weight: 700;
+}
+
+.knowledge-source-note {
+  margin-top: 18px;
+  color: #9ca3af;
+  font-size: 0.77rem;
+  line-height: 1.8;
+}
+
+.knowledge-source-note a {
+  color: #e7ca66;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .knowledge-page {
+    padding-top: 4px;
+  }
+
+  .knowledge-hero {
+    border-radius: 18px;
+  }
+
+  .knowledge-tabs {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 7px;
+  }
+
+  .knowledge-tab {
+    justify-content: flex-start;
+  }
+
+  .knowledge-people-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .knowledge-person-card {
+    padding: 12px;
+  }
+
+  .knowledge-content {
+    padding: 15px;
+  }
+
+  .knowledge-story-section {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .nav-inner {
+    padding-inline: 12px;
+  }
+
+  .nav-brand {
+    font-size: 0.9rem;
+  }
+
+  .nav-desktop {
+    gap: 8px;
+  }
+
+  .nav-desktop-brand-group {
+    gap: 6px;
+  }
+
+  .nav-mosque-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .nav-desktop-links {
+    gap: 0;
+  }
+
+  .nav-btn {
+    padding-inline: 9px;
+  }
+
+}
+
+@media (max-width: 380px) {
+  .nav-brand {
+    font-size: 0.72rem;
+  }
+
+  .nav-mobile-brand .hamburger-btn {
+    padding: 6px;
+  }
+
+  .nav-mobile-sections .nav-btn {
+    padding-inline: 5px;
+    font-size: 0.66rem;
+  }
 }
 
 /* ==========================================
@@ -242,6 +928,20 @@ a {
   padding-right: 26px;
 }
 
+.sidebar-section-title {
+  padding: 0 20px 8px;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.sidebar-item-active,
+.sidebar-item-active:hover {
+  color: var(--color-gold-light);
+  border-color: rgba(245, 200, 66, 0.3);
+  background: rgba(245, 200, 66, 0.1);
+}
+
 .sidebar-item.logout {
   color: #f87171;
   margin-top: auto;
@@ -260,8 +960,305 @@ a {
 }
 
 /* ==========================================
+   ABOUT + DEVELOPER PAGE
+   ========================================== */
+.site-info-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 0 48px;
+}
+
+.site-info-heading {
+  position: relative;
+  padding: 18px 12px 30px;
+  text-align: center;
+}
+
+.site-info-back {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border: 1px solid rgba(245, 200, 66, 0.28);
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.82);
+  color: #f3f4f6;
+  font: 600 0.88rem var(--font-primary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.site-info-back:hover {
+  color: var(--color-gold-light);
+  border-color: rgba(245, 200, 66, 0.65);
+  background: rgba(245, 200, 66, 0.1);
+}
+
+.site-info-eyebrow {
+  color: var(--color-gold);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.site-info-heading h1 {
+  margin-top: 7px;
+  color: #fff;
+}
+
+.site-info-intro {
+  margin-top: 7px;
+  color: #cbd5e1;
+}
+
+.site-info-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.site-info-card {
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid rgba(245, 200, 66, 0.18);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(17, 24, 39, 0.95), rgba(15, 23, 42, 0.88));
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.26);
+}
+
+.site-info-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  color: var(--color-gold-light);
+}
+
+.site-info-card-title span {
+  font-size: 1.4rem;
+}
+
+.site-info-card-title h2 {
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.site-info-description {
+  margin-top: 16px;
+  color: #cbd5e1;
+  font-size: 0.94rem;
+  line-height: 1.9;
+}
+
+.site-info-people {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.site-info-person {
+  min-width: 0;
+  padding: 15px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+  text-align: center;
+}
+
+.site-info-person img {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 10px;
+  border: 2px solid rgba(245, 200, 66, 0.6);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.site-info-person p {
+  color: #d1d5db;
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.site-info-developer {
+  text-align: center;
+}
+
+.site-info-developer .site-info-card-title {
+  text-align: right;
+}
+
+.site-info-developer-photo {
+  width: 132px;
+  height: 132px;
+  margin: 24px auto 12px;
+  border: 3px solid var(--color-gold);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
+}
+
+.site-info-developer h3 {
+  color: #fff;
+  font-size: 1.15rem;
+}
+
+.site-info-developer .site-info-description {
+  margin-top: 8px;
+}
+
+.site-info-contact-links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.site-info-contact-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 1.25rem;
+  transition: var(--transition-smooth);
+}
+
+.site-info-contact-links a:hover {
+  transform: translateY(-3px);
+  border-color: rgba(245, 200, 66, 0.35);
+  background: rgba(245, 200, 66, 0.1);
+}
+
+@media (min-width: 1024px) {
+  .site-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .site-info-heading {
+    padding-top: 64px;
+  }
+
+  .site-info-back {
+    top: 0;
+    right: 50%;
+    transform: translateX(50%);
+    white-space: nowrap;
+  }
+
+  .site-info-people {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .site-info-person {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: right;
+  }
+
+  .site-info-person img {
+    flex: 0 0 auto;
+    width: 58px;
+    height: 58px;
+    margin: 0;
+  }
+}
+
+/* ==========================================
    SECTION CARDS (Surah Grid)
    ========================================== */
+.quran-surah-search {
+  width: min(100%, 620px);
+  margin: 0 auto 18px;
+  font-family: var(--font-primary);
+}
+
+.quran-surah-search > label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--color-gold-light);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.quran-surah-search-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid rgba(245, 200, 66, 0.3);
+  border-radius: 13px;
+  background: rgba(15, 23, 42, 0.88);
+  color: #e7ca66;
+  transition: var(--transition-smooth);
+}
+
+.quran-surah-search-control:focus-within {
+  border-color: rgba(245, 200, 66, 0.72);
+  box-shadow: 0 0 0 3px rgba(245, 200, 66, 0.12);
+}
+
+.quran-surah-search-control input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+  font: 500 0.95rem var(--font-primary);
+}
+
+.quran-surah-search-control input::placeholder {
+  color: #9ca3af;
+}
+
+.quran-surah-search-control input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.quran-surah-search-control button {
+  display: grid;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #d1d5db;
+  cursor: pointer;
+}
+
+.quran-surah-search-control button:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+.quran-surah-search-count,
+.quran-surah-no-results {
+  margin-top: 9px;
+  color: #cbd5e1;
+  font-size: 0.83rem;
+}
+
+.quran-surah-no-results {
+  padding: 22px 12px;
+  text-align: center;
+}
+
 .section-card {
   font-family: var(--font-primary);
   font-weight: 600;
@@ -691,4 +1688,25 @@ audio::-webkit-media-controls-mute-button {
 
 .section-card:nth-child(5) {
   animation-delay: 0.10s;
+}
+
+/* Explicit breakpoints keep only one header variant visible, even if utility CSS is unavailable. */
+@media (min-width: 768px) {
+  .nav-mobile {
+    display: none !important;
+  }
+
+  .nav-desktop {
+    display: grid !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .nav-mobile {
+    display: flex !important;
+  }
+
+  .nav-desktop {
+    display: none !important;
+  }
 }

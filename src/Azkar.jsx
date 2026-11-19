@@ -47,7 +47,7 @@ const Azkar = ({ activeAzkarContent, handleAzkarClick, handleBackToAzkar }) => {
 
   if (loading) {
     return (
-      <div className="p-4 sm:p-6 md:p-8 min-h-screen bg-gray-900 text-white font-sans antialiased">
+      <div className="p-4 sm:p-6 md:p-8 min-h-screen text-white font-sans antialiased">
         <div className="flex justify-center items-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-400 mx-auto"></div>
@@ -60,7 +60,7 @@ const Azkar = ({ activeAzkarContent, handleAzkarClick, handleBackToAzkar }) => {
 
   if (error) {
     return (
-      <div className="p-4 sm:p-6 md:p-8 min-h-screen bg-gray-900 text-white font-sans antialiased">
+      <div className="p-4 sm:p-6 md:p-8 min-h-screen text-white font-sans antialiased">
         <div className="flex justify-center items-center min-h-screen">
           <div className="text-center">
             <p className="text-xl text-red-400">{error}</p>
@@ -77,7 +77,7 @@ const Azkar = ({ activeAzkarContent, handleAzkarClick, handleBackToAzkar }) => {
   }
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 min-h-screen bg-gray-900 text-white font-sans antialiased">
+    <div className="p-4 sm:p-6 md:p-8 min-h-screen text-white font-sans antialiased">
       {activeAzkarContent === null && (
         <div className="max-w-4xl mx-auto py-8">
           <h2 className="text-4xl sm:text-5xl font-extrabold text-center mb-10 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">
