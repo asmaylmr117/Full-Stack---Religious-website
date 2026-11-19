@@ -531,10 +531,47 @@ const PdfCard = ({ surahData, showPdfModal, setShowPdfModal, onNotify }) => {
   );
 };
 
-const firstTenSectionImages = [
-  'img/mostafa.jpg', 'img/abdoo.jpg', 'img/Sedeq.jpg', 'img/hosery.jpg', 'img/bana.jpg',
-  'img/agmy1.jpg', 'img/sodes.jpg', 'img/moeqlyi.jpeg', 'img/unnamed.png', 'img/mshary.jpg',
+const surahAudioReciters = [
+  { match: /golmami/i, name: ' مصطفى اسماعيل', image: 'img/mostafa.jpg' },
+  { match: /server7\.mp3quran\.net\/basit/i, name: 'عبد الباسط عبد الصمد', image: 'img/abdoo.jpg' },
+  { match: /server10\.mp3quran\.net\/minsh/i, name: 'محمد صديق المنشاوي', image: 'img/Sedeq.jpg' },
+  { match: /server13\.mp3quran\.net\/husr/i, name: 'محمود خليل الحصري', image: 'img/hosery.jpg' },
+  { match: /server8\.mp3quran\.net\/bna/i, name: 'محمود علي البنا', image: 'img/bana.jpg' },
+  { match: /server10\.mp3quran\.net\/ajm/i, name: 'أحمد العجمي', image: 'img/agmy1.jpg' },
+  { match: /server11\.mp3quran\.net\/sds/i, name: 'عبد الرحمن السديس', image: 'img/sodes.jpg' },
+  { match: /server12\.mp3quran\.net\/maher/i, name: 'ماهر المعيقلي', image: 'img/moeqlyi.jpeg' },
+  { match: /Quran-Huzza-Al_Baloushi/i, name: 'هزاع البلوشي', image: 'img/bloshy . jpg' },
+  { match: /server8\.mp3quran\.net\/afs/i, name: 'مشاري العفاسي', image: 'img/mshary.jpg' },
+  { match: /yasser-dosari/i, name: 'ياسر الدوسري', image: 'img/dosry.jpg' },
+  { match: /muhammad-tablawi/i, name: 'محمد محمود الطبلاوي', image: 'img/tablawy.jpg' },
+  { match: /saad-ghamdi/i, name: 'سعد الغامدي', image: 'img/saad.jpg' },
+  { match: /ahmad-naina/i, name: 'أحمد نعينع', image: 'img/neana.jpg' },
+  { match: /fares-abbad/i, name: 'فارس عباد', image: 'img/fares.jpg' },
 ];
+
+const normalizeSurahAudio = (records) => {
+  if (!Array.isArray(records)) return [];
+
+  return records
+    .map((record, index) => ({
+      url: typeof record === 'string' ? record : record?.audio_url,
+      index,
+    }))
+    .filter(({ url }) => typeof url === 'string' && url.trim())
+    .map(({ url, index }) => {
+      const reciterIndex = surahAudioReciters.findIndex(({ match }) => match.test(url));
+      const reciter = surahAudioReciters[reciterIndex];
+
+      return {
+        url,
+        index,
+        order: reciterIndex === -1 ? surahAudioReciters.length + index : reciterIndex,
+        name: reciter?.name || 'قارئ إضافي',
+        image: reciter?.image || 'img/unnamed.png',
+      };
+    })
+    .sort((a, b) => a.order - b.order || a.index - b.index);
+};
 
 const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
   const [surahNames, setSurahNames] = useState([]);
@@ -571,7 +608,11 @@ const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
     setIsLoadingSurahData(true);
     fetch(`https://gana-back-plum.vercel.app/api/surahs/${activeSurahIndex + 1}`)
       .then((r) => r.json())
-      .then((data) => setSurahData({ name: data.name, pdfs: data.pdfs, audio: data.audio }))
+      .then((data) => setSurahData({
+        name: data.name || '',
+        pdfs: Array.isArray(data.pdfs) ? data.pdfs : [],
+        audio: normalizeSurahAudio(data.audio),
+      }))
       .catch(console.error)
       .finally(() => setIsLoadingSurahData(false));
   }, [activeSurahIndex]);
@@ -649,9 +690,9 @@ const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
 
           {/* ── قارئي التلاوات ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mb-6">
-            {firstTenSectionImages.map((image, index) => (
+            {surahData.audio.map((audioItem, index) => (
               <div
-                key={index}
+                key={`${audioItem.url}-${audioItem.index}`}
                 className="audio-gold-frame"
                 style={{
                   borderRadius: '14px',
@@ -662,23 +703,22 @@ const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
                 }}
               >
                 <img
-                  src={image}
-                  alt={`قارئ ${index + 1}`}
+                  src={audioItem.image}
+                  alt={audioItem.name}
                   className="w-full object-cover aspect-video"
                   loading="lazy"
                 />
-                {surahData.audio?.[index] && (
-                  <div className="p-2">
-                    <audio
-                      controls
-                      className="w-full"
-                      ref={(el) => (audioRefs.current[index] = el)}
-                      onPlay={() => handlePlay(index)}
-                    >
-                      <source src={surahData.audio[index]} type="audio/mpeg" />
-                    </audio>
-                  </div>
-                )}
+                <div className="p-2">
+                  <p className="text-center text-sm font-semibold text-white mb-2">{audioItem.name}</p>
+                  <audio
+                    controls
+                    className="w-full"
+                    ref={(el) => (audioRefs.current[index] = el)}
+                    onPlay={() => handlePlay(index)}
+                  >
+                    <source src={audioItem.url} type="audio/mpeg" />
+                  </audio>
+                </div>
               </div>
             ))}
           </div>
