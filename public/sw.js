@@ -1,11 +1,12 @@
 // ─── Service Worker ───────────────────────────────────────────────────────────
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const CACHE_NAME = `al-tariq-ila-al-janna-${CACHE_VERSION}`;
 
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/offline.html',
+  '/favicon.svg',
   '/mosque-svgrepo-com.svg',
   '/img/photo.jpg',
   '/img/noshaf.png',
