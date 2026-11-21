@@ -1421,7 +1421,7 @@ audio::-webkit-media-controls-mute-button {
 .quran-text-reader {
   position: relative;
   margin-bottom: 24px;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid rgba(245, 200, 66, 0.3);
   border-radius: 16px;
   background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(24, 32, 44, 0.98));
@@ -1429,12 +1429,15 @@ audio::-webkit-media-controls-mute-button {
 }
 
 .quran-reader-toolbar {
+  position: relative;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 16px 18px;
   border-bottom: 1px solid rgba(245, 200, 66, 0.22);
+  border-radius: 15px 15px 0 0;
   background: rgba(15, 23, 42, 0.92);
 }
 
@@ -1466,34 +1469,144 @@ audio::-webkit-media-controls-mute-button {
 }
 
 .quran-tafsir-picker {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
   color: #e5e7eb;
   font-size: 0.84rem;
   font-weight: 700;
 }
 
-.quran-tafsir-picker select {
-  max-width: min(48vw, 250px);
-  min-height: 40px;
-  padding: 6px 10px;
+.quran-tafsir-label {
+  flex: 0 0 auto;
+}
+
+.quran-tafsir-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: min(250px, 100%);
+  min-width: 0;
+  min-height: 42px;
+  padding: 7px 11px;
   border: 1px solid rgba(245, 200, 66, 0.35);
   border-radius: 9px;
   outline: none;
   background: #111827;
   color: #fff;
   font: 600 0.82rem var(--font-primary);
+  text-align: right;
+  cursor: pointer;
 }
 
-.quran-tafsir-picker select:focus {
+.quran-tafsir-trigger:hover,
+.quran-tafsir-trigger:focus-visible {
   border-color: var(--color-gold);
   box-shadow: 0 0 0 3px rgba(245, 200, 66, 0.13);
+  outline: none;
 }
 
-.quran-tafsir-picker option {
+.quran-tafsir-selected {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quran-tafsir-chevron {
+  flex: 0 0 auto;
+  color: var(--color-gold);
+  transition: transform 0.18s ease;
+}
+
+.quran-tafsir-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+.quran-tafsir-menu {
+  position: absolute;
+  top: calc(100% + 7px);
+  right: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  width: min(320px, calc(100vw - 32px));
+  max-height: min(44dvh, 340px);
+  padding: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(245, 200, 66, 0.34);
+  border-radius: 12px;
   background: #111827;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.48);
+}
+
+.quran-tafsir-search {
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: 40px;
+  margin-bottom: 6px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.06);
   color: #fff;
+  font: 500 0.85rem var(--font-primary);
+}
+
+.quran-tafsir-search:focus {
+  border-color: var(--color-gold);
+}
+
+.quran-tafsir-search::placeholder {
+  color: #9ca3af;
+}
+
+.quran-tafsir-options {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+}
+
+.quran-tafsir-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #e5e7eb;
+  font: 500 0.84rem var(--font-primary);
+  text-align: right;
+  cursor: pointer;
+}
+
+.quran-tafsir-option:hover,
+.quran-tafsir-option:focus-visible,
+.quran-tafsir-option.is-selected {
+  outline: none;
+  background: rgba(245, 200, 66, 0.12);
+  color: var(--color-gold-light);
+}
+
+.quran-tafsir-option span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.quran-tafsir-empty {
+  padding: 12px 8px;
+  color: #9ca3af;
+  font-size: 0.82rem;
+  text-align: center;
 }
 
 .quran-reader-fullscreen-button {
@@ -1518,7 +1631,8 @@ audio::-webkit-media-controls-mute-button {
 .quran-reader-scroll {
   max-height: min(75vh, 1000px);
   overflow-y: auto;
-  overscroll-behavior: contain;
+  overscroll-behavior-y: auto;
+  touch-action: pan-y;
   padding: clamp(14px, 3vw, 28px);
 }
 
@@ -1632,14 +1746,21 @@ audio::-webkit-media-controls-mute-button {
   z-index: 99999;
   display: flex;
   flex-direction: column;
+  width: 100vw;
+  height: 100dvh;
   margin: 0;
   border: 0;
   border-radius: 0;
   background: #080d18;
+  overflow: hidden;
+  overscroll-behavior-y: auto;
 }
 
 .quran-reader-fullscreen .quran-reader-toolbar {
+  position: relative;
+  z-index: 5;
   flex-shrink: 0;
+  border-radius: 0;
   padding-top: max(12px, env(safe-area-inset-top));
 }
 
@@ -1648,7 +1769,36 @@ audio::-webkit-media-controls-mute-button {
   max-height: none;
   min-height: 0;
   flex: 1;
+  overflow-y: auto;
+  overscroll-behavior-y: auto;
   padding-bottom: max(20px, env(safe-area-inset-bottom));
+}
+
+.quran-audio-section {
+  scroll-margin-top: 90px;
+}
+
+.quran-continue-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 24px auto 8px;
+  padding: 11px 18px;
+  border: 1px solid rgba(245, 200, 66, 0.45);
+  border-radius: 999px;
+  background: rgba(245, 200, 66, 0.1);
+  color: var(--color-gold-light);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.quran-continue-page:hover,
+.quran-continue-page:focus-visible {
+  outline: none;
+  background: rgba(245, 200, 66, 0.18);
 }
 
 .quran-api-error {
@@ -1700,15 +1850,18 @@ audio::-webkit-media-controls-mute-button {
     justify-content: initial;
   }
 
-  .quran-tafsir-picker select {
+  .quran-tafsir-trigger {
     width: 100%;
     min-width: 0;
     max-width: none;
     min-height: 44px;
     padding-inline: 11px;
     font-size: 0.88rem;
-    direction: rtl;
-    text-overflow: ellipsis;
+  }
+
+  .quran-tafsir-menu {
+    width: 100%;
+    max-height: min(42dvh, 300px);
   }
 
   .quran-ayah-card {

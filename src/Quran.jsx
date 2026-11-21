@@ -169,6 +169,7 @@ const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
   const [catalogRetry, setCatalogRetry] = useState(0);
   const [quranRetry, setQuranRetry] = useState(0);
   const audioRefs = useRef([]);
+  const audioSectionRef = useRef(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -207,13 +208,13 @@ const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
   }, []);
 
   useEffect(() => {
-    if (showQuranFullscreen) {
-      const previousOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = previousOverflow;
-      };
-    }
+    if (!showQuranFullscreen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
   }, [showQuranFullscreen]);
 
   useEffect(() => {
@@ -271,6 +272,15 @@ const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
         audio.pause();
         audio.currentTime = 0;
       }
+    });
+  }, []);
+
+  const continueBelowReader = useCallback(() => {
+    setShowQuranFullscreen(false);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        audioSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
     });
   }, []);
 
@@ -379,10 +389,11 @@ const Quran = ({ activeSurahIndex, showSurah, closeSurah }) => {
             onTafsirChange={setSelectedTafsirId}
             isFullscreen={showQuranFullscreen}
             onToggleFullscreen={() => setShowQuranFullscreen((isFullscreen) => !isFullscreen)}
+            onContinueBelow={continueBelowReader}
           />
 
           {/* ── قارئي التلاوات ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mb-6">
+          <div ref={audioSectionRef} className="quran-audio-section grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mb-6">
             {audioItems.map((audioItem, index) => (
               <div
                 key={`${audioItem.url}-${audioItem.index}`}
