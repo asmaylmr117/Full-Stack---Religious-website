@@ -1,5 +1,5 @@
 // ─── Service Worker ───────────────────────────────────────────────────────────
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = `al-tariq-ila-al-janna-${CACHE_VERSION}`;
 
 const STATIC_ASSETS = [
@@ -65,6 +65,27 @@ self.addEventListener('fetch', (event) => {
 
   if (request.method !== 'GET') return;
 
+  // Qurani.ai: network-first so Quran text and tafsir stay current, with an offline cache fallback.
+  if (url.hostname === 'api.qurani.ai') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone)).catch(() => {});
+          }
+          return response;
+        })
+        .catch(() =>
+          caches.match(request).then((cached) => cached || new Response(
+            JSON.stringify({ code: 503, status: 'Error', data: 'Quran data is unavailable offline.' }),
+            { status: 503, headers: { 'Content-Type': 'application/json' } },
+          ))
+        )
+    );
+    return;
+  }
+
   // API calls (Vercel backend): Network-first, cache fallback
   if (url.hostname.includes('vercel.app')) {
     event.respondWith(
@@ -88,16 +109,6 @@ self.addEventListener('fetch', (event) => {
             });
           })
         )
-    );
-    return;
-  }
-
-  // Google Drive (PDFs): Network-only
-  if (url.hostname.includes('drive.google.com')) {
-    event.respondWith(
-      fetch(request).catch(() =>
-        new Response('Unavailable offline', { status: 503 })
-      )
     );
     return;
   }

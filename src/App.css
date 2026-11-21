@@ -1,7 +1,7 @@
 /* ==========================================
    @import — Google Fonts
    ========================================== */
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap');
 
 /* ==========================================
    ROOT VARIABLES
@@ -1416,33 +1416,290 @@ audio::-webkit-media-controls-mute-button {
 }
 
 /* ==========================================
-   PDF VIEWER
+   QURANI.AI TEXT QURAN AND TAFSIR READER
    ========================================== */
-.pdf-card {
-  background: linear-gradient(135deg, #7c5c10 0%, #a37a1a 50%, #7c5c10 100%);
-  border-radius: 16px;
-  padding: 14px;
-  box-shadow: 0 8px 32px rgba(163, 122, 26, 0.3);
+.quran-text-reader {
+  position: relative;
+  margin-bottom: 24px;
+  overflow: hidden;
   border: 1px solid rgba(245, 200, 66, 0.3);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(24, 32, 44, 0.98));
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.32);
 }
 
-@media (min-width: 640px) {
-  .pdf-card {
-    padding: 24px;
+.quran-reader-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(245, 200, 66, 0.22);
+  background: rgba(15, 23, 42, 0.92);
+}
+
+.quran-reader-heading,
+.quran-reader-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quran-reader-heading {
+  min-width: 0;
+  color: var(--color-gold);
+}
+
+.quran-reader-heading h3 {
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+.quran-reader-heading p {
+  margin-top: 2px;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.quran-reader-actions {
+  flex-shrink: 0;
+}
+
+.quran-tafsir-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e5e7eb;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.quran-tafsir-picker select {
+  max-width: min(48vw, 250px);
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 1px solid rgba(245, 200, 66, 0.35);
+  border-radius: 9px;
+  outline: none;
+  background: #111827;
+  color: #fff;
+  font: 600 0.82rem var(--font-primary);
+}
+
+.quran-tafsir-picker select:focus {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(245, 200, 66, 0.13);
+}
+
+.quran-tafsir-picker option {
+  background: #111827;
+  color: #fff;
+}
+
+.quran-reader-fullscreen-button {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid rgba(245, 200, 66, 0.35);
+  border-radius: 9px;
+  background: rgba(245, 200, 66, 0.1);
+  color: var(--color-gold);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.quran-reader-fullscreen-button:hover {
+  background: rgba(245, 200, 66, 0.2);
+  transform: translateY(-1px);
+}
+
+.quran-reader-scroll {
+  max-height: min(75vh, 1000px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(14px, 3vw, 28px);
+}
+
+.quran-reader-surah-intro {
+  margin: 0 auto 22px;
+  padding: 6px 12px 18px;
+  border-bottom: 1px solid rgba(245, 200, 66, 0.2);
+  text-align: center;
+}
+
+.quran-reader-surah-intro h4 {
+  color: var(--color-gold-light);
+  font-size: clamp(1.2rem, 2.4vw, 1.65rem);
+}
+
+.quran-reader-surah-intro p {
+  margin-top: 4px;
+  color: #cbd5e1;
+  font-size: 0.85rem;
+}
+
+.quran-ayah-list {
+  display: grid;
+  gap: 14px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.quran-ayah-card {
+  padding: clamp(14px, 2.2vw, 22px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.quran-ayah-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: var(--color-gold);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.quran-sajda-badge {
+  padding: 3px 8px;
+  border: 1px solid rgba(245, 200, 66, 0.3);
+  border-radius: 99px;
+  color: #fde68a;
+  font-size: 0.72rem;
+}
+
+.quran-ayah-text {
+  color: #fff;
+  direction: rtl;
+  font-family: 'Amiri', 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.15rem);
+  line-height: 2.25;
+  text-align: right;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.quran-ayah-end {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25em;
+  height: 2.25em;
+  margin: 0 8px;
+  border: 1.5px solid var(--color-gold);
+  border-radius: 50%;
+  background: rgba(245, 200, 66, 0.06);
+  color: var(--color-gold-light);
+  font-family: var(--font-primary);
+  font-size: 0.56em;
+  font-weight: 700;
+  line-height: 1;
+  direction: ltr;
+  unicode-bidi: isolate;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.quran-tafsir-text {
+  margin-top: 16px;
+  padding: 13px 16px;
+  border-right: 3px solid var(--color-gold);
+  border-radius: 0 10px 10px 0;
+  background: rgba(245, 200, 66, 0.07);
+}
+
+.quran-tafsir-text h5 {
+  margin-bottom: 5px;
+  color: var(--color-gold-light);
+  font-size: 0.88rem;
+}
+
+.quran-tafsir-text p {
+  color: #e5e7eb;
+  font-size: 0.94rem;
+  line-height: 2;
+  white-space: pre-wrap;
+}
+
+.quran-reader-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: #080d18;
+}
+
+.quran-reader-fullscreen .quran-reader-toolbar {
+  flex-shrink: 0;
+  padding-top: max(12px, env(safe-area-inset-top));
+}
+
+.quran-reader-fullscreen .quran-reader-scroll {
+  width: 100%;
+  max-height: none;
+  min-height: 0;
+  flex: 1;
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+}
+
+.quran-api-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px auto;
+  padding: 14px;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 12px;
+  background: rgba(127, 29, 29, 0.2);
+  color: #fecaca;
+  text-align: center;
+}
+
+.quran-api-error button {
+  padding: 7px 12px;
+  border: 1px solid rgba(245, 200, 66, 0.45);
+  border-radius: 8px;
+  background: rgba(245, 200, 66, 0.12);
+  color: var(--color-gold-light);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .quran-reader-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 13px;
   }
-}
 
-.pdf-preview-frame {
-  min-height: 500px !important;
-  height: 55vh;
-  border-radius: 10px;
-  border: none;
-}
+  .quran-reader-actions {
+    width: 100%;
+  }
 
-.pdf-modal-frame {
-  height: calc(100vh - 60px);
-  border: none;
-  border-radius: 0 0 12px 12px;
+  .quran-tafsir-picker {
+    flex: 1;
+    justify-content: space-between;
+  }
+
+  .quran-tafsir-picker select {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .quran-ayah-card {
+    padding: 14px 12px;
+  }
 }
 
 /* ==========================================
@@ -1599,23 +1856,11 @@ audio::-webkit-media-controls-mute-button {
   html {
     font-size: 14px;
   }
-
-  .pdf-preview-frame {
-    min-height: 480px !important;
-    height: 65vh;
-  }
 }
 
 @media (max-width: 768px) {
   .background-image {
     background-position: 72% center;
-  }
-}
-
-@media (min-width: 1024px) {
-  .pdf-preview-frame {
-    min-height: 600px !important;
-    height: 65vh;
   }
 }
 
@@ -1708,5 +1953,55 @@ audio::-webkit-media-controls-mute-button {
 
   .nav-desktop {
     display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .nav-mobile {
+    min-height: 58px;
+    gap: 8px;
+  }
+
+  .nav-mobile-brand {
+    min-height: 46px;
+    gap: 6px;
+  }
+
+  .nav-mobile .nav-brand {
+    font-size: 1.05rem;
+  }
+
+  .nav-mobile-sections {
+    gap: 2px;
+  }
+
+  .nav-mobile-sections .nav-btn {
+    min-height: 38px;
+    padding: 7px 8px;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav-inner {
+    padding-inline: 8px;
+  }
+
+  .nav-mobile {
+    gap: 4px;
+  }
+
+  .nav-mobile-brand {
+    gap: 4px;
+  }
+
+  .nav-mobile .nav-brand {
+    font-size: 0.92rem;
+  }
+
+  .nav-mobile-sections .nav-btn {
+    min-height: 34px;
+    padding: 6px 4px;
+    font-size: 0.74rem;
   }
 }
