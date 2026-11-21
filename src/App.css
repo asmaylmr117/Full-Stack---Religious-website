@@ -1685,16 +1685,30 @@ audio::-webkit-media-controls-mute-button {
 
   .quran-reader-actions {
     width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 40px;
+    align-items: end;
+    gap: 10px;
   }
 
   .quran-tafsir-picker {
-    flex: 1;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    min-width: 0;
+    gap: 5px;
+    justify-content: initial;
   }
 
   .quran-tafsir-picker select {
-    flex: 1;
+    width: 100%;
     min-width: 0;
+    max-width: none;
+    min-height: 44px;
+    padding-inline: 11px;
+    font-size: 0.88rem;
+    direction: rtl;
+    text-overflow: ellipsis;
   }
 
   .quran-ayah-card {
